@@ -72,3 +72,7 @@ Welcome to HappyAnmials zoo !
  - We don't allow Dogs
  - We can store at most 5 animals in here
 ```
+
+- [Simple example showing user input defined variables and type-safety](examples/dynvars3.cpp)
+
+While this example may seem to overcomplicate the usage of DynVars, the idea behind it is to show how dynamic variables are created and how type safety check behaves (throwing `any_bad_cast` on incorrect `Get<T>`)
