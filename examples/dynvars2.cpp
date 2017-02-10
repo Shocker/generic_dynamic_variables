@@ -1,4 +1,4 @@
-#include "dynvars.h"
+#include "../dynvars.h"
 
 class Config : public DynVars
 {
