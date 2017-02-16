@@ -32,7 +32,7 @@ Below **Methods** you can also find some examples and valgrind (gargabe collecti
 
 - `T * GetAuto(key, createIfInexistent = true)` - gets/creates a non-fundamental type (vectors, maps, custom classes, etc); the destructor is called automatically and the memory is freed automatically on variable remove
 
-- `void Lock() / void Unlock()` - manually lock/unlock variables in case you're accessing/modifying the variable contents outside of the DynVarsSafe methods
+- `void Lock() / void Unlock()` - manually lock/unlock variables in case you're accessing/modifying the variable contents outside of the **[DynVarsSafe](dynvars.h#L158)** methods
 
 #### Examples
 - [Simple example showing most DynVars methods](examples/dynvars.cpp)
@@ -70,7 +70,7 @@ Below **Methods** you can also find some examples and valgrind (gargabe collecti
 - [Same example but using the DynVarsSafe thread-safe wrapper](examples/dynvars4.cpp)
    - Test was done using 30 loops of 50 threads, resulting a total of 1500 threads (however only 50 threads were concurrent at any specific time at most)
    - Valgrind memory leaks log: [click](valgrind/example_4.log)
-   - Helgrind thread sync/data races log: [click](valgrind/example_4.log)
+   - Helgrind thread sync/data races log: [click](valgrind/helgrind_example_4.log)
    
 - [Practical example with a Config class](examples/dynvars2.cpp)
    - Valgrind memory leaks log: [click](valgrind/example_2.log)  
