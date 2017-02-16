@@ -1,0 +1,4 @@
+valgrind \
+    --log-file="valgrind/helgrind_example_$1.log" \
+    --tool=helgrind \
+    ./dyn_$1

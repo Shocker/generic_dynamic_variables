@@ -18,7 +18,7 @@ int main()
     Config config;
 
     // add variables
-    config.SetString("ZooName", "HappyAnmials");
+    config.SetString("ZooName", "HappyAnimals");
     config.SetBool("Allow.Cats", true);
     config.SetBool("Allow.Dogs", false);
     config.SetInt("Limits.Animals", 5);

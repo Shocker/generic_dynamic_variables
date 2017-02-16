@@ -24,10 +24,12 @@ void testThreads()
     vars.Set("aChar", aChar); // automatically deduce type
     printf("aChar = %c\n\n", vars.GetValue<char>("aChar"));
 
+    vars.Lock(); // lock variables because content is accessed/modified outside of the DynVarsSafe class
     float * aFloat = vars.GetOrCreate<float>("aFloat");
     printf("aFloat = %f\n", *aFloat);
     *aFloat = 3.14f;
     printf("aFloat = %f\n\n", *aFloat);
+    vars.Unlock();
 
     int unsetVariable = vars.GetValue<int>("unsetVariable");
     printf("Is 'unsetVariable' set = %d, unsetVariable value = %d\n\n", vars.IsSet("unsetVariable"), unsetVariable);
@@ -39,7 +41,7 @@ void testThreads()
     printf("int2 = %d, &int3 = %p, int3 = %d, &int4 = %p, int4 = %d\n\n", vars.GetValue<int>("int2"), vars.Get<int>("int3"), vars.GetValue<int>("int3"), vars.Get<int>("int4"), vars.GetValue<int>("int4"));
 
     // remove variables by wildcard name
-    vars.Lock();
+    vars.Lock(); // lock variables because content is accessed/modified outside of the DynVarsSafe class
     DynVars::variablesMap const * list = vars.GetVariables();
     printf("current variables: ");
     for (auto varData : *list)
@@ -52,7 +54,7 @@ void testThreads()
     vars.Unlock();
 
     // create another variable for a non-fundamental std type
-    vars.Lock();
+    vars.Lock(); // lock variables because content is accessed/modified outside of the DynVarsSafe class
     auto intVector = vars.GetAuto<std::vector<int>>("intVector");
     intVector->push_back(123);
     intVector->push_back(456);
@@ -61,7 +63,7 @@ void testThreads()
 
     // create a variable for a non-fundamental custom class
     printf("someClass should be created next:\n");
-    vars.Lock();
+    vars.Lock(); // lock variables because content is accessed/modified outside of the DynVarsSafe class
     vars.GetAuto<someClass>("someClassInstance")->val = 16; // create a someClass instance and assign field "val" = 16;
     auto someClassInstance = vars.GetAuto<someClass>("someClassInstance"); // get the previously created instance of someClass
     someClassInstance->secondVal = 34; // and assign field "secondVal" = 34;

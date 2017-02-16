@@ -1,0 +1,7 @@
+valgrind \
+    --log-file="valgrind/example_$1.log" \
+    --leak-check=full \
+    --show-reachable=no \
+    --error-limit=no \
+    --track-origins=yes \
+    ./dyn_$1
