@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <assert.h>
 #include <regex>
+#include <mutex>
 
 #include "any.h"
 
@@ -16,6 +17,7 @@ class DynVars
 {
     public:
         DynVars() : ensureAlreadyExists(false) { }
+        virtual ~DynVars() { } // make class polymorphic
 
         typedef std::unordered_map<std::string, anyspace::any> variablesMap;
 
@@ -45,12 +47,6 @@ class DynVars
                 return anyspace::any_cast<T>(itr->second);
             return T();
         }
-        DynVars * Set(std::string const& key, anyspace::any&& value)
-        {
-            _ensureVariable(key);
-            variables[key] = std::move(value);
-            return this;
-        }
         template<typename T>
         DynVars * Set(std::string const& key, T&& value)
         {
@@ -63,12 +59,6 @@ class DynVars
         {
             _ensureVariable(key);
             variables[key] = std::move((anyspace::any&&)value);
-            return value;
-        }
-        anyspace::any SetAndReturnValue(std::string const& key, anyspace::any&& value)
-        {
-            _ensureVariable(key);
-            variables[key] = std::move(value);
             return value;
         }
         template<typename T>
@@ -162,4 +152,27 @@ class DynVars
                 return;
             ASSERT(IsSet(key), "Invalid variable '%s'", key.c_str());
         }
+};
+
+#define __LOCK std::lock_guard<std::recursive_mutex> lock(_lock)
+class DynVarsSafe : public DynVars
+{
+    public:
+        template<typename T> T * Get(std::string const& key) const { __LOCK; return DynVars::Get<T>(key); }
+        template<typename T> T * GetOrCreate(std::string const& key) { __LOCK; return DynVars::GetOrCreate<T>(key); }
+        template<typename T> T GetValue(std::string const& key) const { __LOCK; return DynVars::GetValue<T>(key); }
+        template<typename T> DynVarsSafe * Set(std::string const& key, T&& value) { __LOCK; return dynamic_cast<DynVarsSafe*>(DynVars::Set<T>(key, (T&&)value)); }
+        template<typename T> T SetAndReturnValue(std::string const& key, T&& value) { __LOCK; return DynVars::SetAndReturnValue<T>(key, (T&&)value); }
+        template<typename T> DynVarsSafe * Reset(std::string const& key) { __LOCK; return dynamic_cast<DynVarsSafe*>(DynVars::Reset<T>(key)); }
+        DynVarsSafe * ToggleBool(std::string const& key) { __LOCK; return dynamic_cast<DynVarsSafe*>(DynVars::ToggleBool(key)); }
+        template<typename T> T * GetAuto(std::string const& key, bool createIfInexistent = true) { __LOCK; return DynVars::GetAuto<T>(key, createIfInexistent); }
+        DynVarsSafe * Remove(std::string const& key, bool regexCaseSensitive = true) { __LOCK; return dynamic_cast<DynVarsSafe*>(DynVars::Remove(key, regexCaseSensitive)); }
+        bool IsSet(std::string const& key) const { __LOCK; return DynVars::IsSet(key); }
+        DynVarsSafe * Clear() { __LOCK; return dynamic_cast<DynVarsSafe*>(DynVars::Clear()); }
+
+        void Lock() { _lock.lock(); }
+        void Unlock() { _lock.unlock(); }
+
+    private:
+        mutable std::recursive_mutex _lock;
 };

@@ -1,6 +1,6 @@
 # C++ generic dynamic variables
 
-With the **[DynVars](dynvars.h)** class you can simulate the creation of well-defined-and-named variables at runtime just like dynamically typed languages do, including type-safety and garbage collection
+With the **[DynVars](dynvars.h)** class you can simulate the creation of well-defined-and-named variables at runtime just like dynamically typed languages do, including type-safety, garbage collection and thread-safety
 
 #### Methods
 
@@ -14,7 +14,7 @@ With the **[DynVars](dynvars.h)** class you can simulate the creation of well-de
 
 - `DynVars * Set<T>(key, value)` - set value with explicit type, overwrites if already existing
 
-- `anyspace::any SetAndReturnValue(key, value)` - set value and return the same value
+- `T SetAndReturnValue(key, value)` - set value and return the same value
 
 - `T SetAndReturnValue<T>(key, value)` - set value with explicit type and return the same value
 
@@ -29,6 +29,8 @@ With the **[DynVars](dynvars.h)** class you can simulate the creation of well-de
 - `DynVars * ToggleBool(key)` - sets variable to `true` if it doesn't exist or removes it if it exists
 
 - `T * GetAuto(key, createIfInexistent = true)` - gets/creates a non-fundamental type (vectors, maps, custom classes, etc); the destructor is called automatically and the memory is freed automatically on variable remove
+
+- `void Lock() / void Unlock()` - manually lock/unlock variables in case you're accessing/modifying the variable contents outside of the DynVars methods
 
 #### Examples
 - [Simple example showing most DynVars methods](examples/dynvars.cpp)
@@ -63,6 +65,8 @@ another someClass should be created next and automatically destroyed at scope en
 {scope ended}
  - someClass destroyed, value = 0, secondVal = 333
 ```
+- [Same example but using the DynVarsSafe thread-safe wrapper](examples/dynvars4.cpp)
+
 - [Practical example with a Config class](examples/dynvars2.cpp)
 
 Output:

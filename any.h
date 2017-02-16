@@ -126,7 +126,7 @@ Type any_cast(any& val)
 template<class Type>
 Type any_cast(const any& val)
 {
-    return any_cast<Type>(const_cast<any &>(val));
+    return static_cast<Type>(*any_cast<typename remove_cv<Type>::type>(&val));
 }
 
 template<class Type>

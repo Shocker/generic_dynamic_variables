@@ -1,6 +1,6 @@
 #include "../dynvars.h"
 
-class Config : public DynVars
+class Config : public DynVarsSafe
 {
     public:
         int GetInt(std::string const& key) { return GetValue<int>(key); }
